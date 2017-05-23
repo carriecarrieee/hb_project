@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Job Titles related to {{ search_input }}</h2>
+      {% for skill in skills %}
+          <li>
+              <a href="/related_skills/{{ user.user_id }}">
+                User ID: {{ title }}
+              </a>
+          </li>
+      {% endfor %}
+
+
+{% endblock %}
