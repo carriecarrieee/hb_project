@@ -89,20 +89,22 @@ def logout_process():
     return redirect("/")
 
 
-@app.route("/search")
+@app.route("/search_titles")
 def titles_query():
     """Takes user search input, retrieves json string and matches job titles to
        database, returns titles and salary information."""
 
-    query_titles()
+    search_input = request.args.get('search_input')
+    titles_list, uuid_list_ignore = skillsAPI.query_titles(search_input)
 
-    return render_template("/related_jobs.html")
+    return render_template("/related_titles.html", titles=titles_list)
 
-@app.route("/search")
+@app.route("/search_skills")
 def skills_query():
     """Returns list of skills related to each job title."""
 
-    query_skills_from_title()
+    search_input = request.args.get('search_input')
+    skillsAPI.query_skills_from_title(search_input)
 
     return render_template("/related_skills.html")
 
