@@ -18,9 +18,13 @@ def query_titles(search_input):
     # pprint(results)
     for result in results:
         print type(result)
-        uuid_list.append(result.get('uuid', None))
-        titles_list.append(result.get('suggestion'.decode('unicode-escape'), None).encode('utf-8'))
+        uuid_list.append(str(result.get('uuid', '')))
+        # titles_list.append(str(result.get('suggestion'.decode('unicode-escape'), None).encode('utf-8')))
+        titles_list.append(str(result.get('suggestion', '')))
     pprint(titles_list)
+    
+
+
     return titles_list, uuid_list
 
 def query_skills_from_title(search_input):
@@ -40,7 +44,7 @@ def query_skills_from_title(search_input):
 
         id_to_skills[uuid] = [skill["skill_name"] for skill in r["skills"] \
             if skill["importance"] > 3.5]
-            
+
         # pprint(id_to_job_obj[uuid]["job_title"])
         # for skill in sdict[uuid]["skills"]:
         #     skill_names_list.append(skill["skill_name"]) if skill["importance"] > 3.5
