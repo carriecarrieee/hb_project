@@ -8,7 +8,7 @@ from flask import (Flask, render_template, redirect, request, flash,
                    session, jsonify)
 # from flask_debugtoolbar import DebugToolbarExtension
 
-from model import Users, Skills, UserSkills, connect_to_db, db
+from model import Users, Skills, Titles, UserSkills, UserTitles, connect_to_db, db
 
 import skillsAPI
 
@@ -21,13 +21,13 @@ app.jinja_env.undefined = StrictUndefined
 
 
 @app.route('/')
-def index():
+def home():
     """Homepage."""
 
-    return render_template("index.html")
+    return render_template("home.html")
 
 
-@app.route("/register")
+@app.route("/reg_form")
 def reg_form():
     """Renders register form."""
 
@@ -39,48 +39,48 @@ def reg_process():
     """Takes information from register form and checks if a user with the
        email address exists, and if not, creates a new user in the database."""
 
+    fname = request.form.get("firstname")
+    lname = request.form.get("lastname")
     email = request.form.get("email")
     pwd = request.form.get("pwd")
 
     # https://passlib.readthedocs.io/en/stable/
     pwd_hashed = pbkdf2_sha256.hash(pwd)
 
-    if db.session.query(User).filter(User.email == email).first() is None:
-        new_user = User(email=email, password=pwd)
+    if db.session.query(Users).filter(Users.email == email).first() is None:
+        new_user = Users(email=email, pwd_hashed=pwd_hashed)
         db.session.add(new_user)
         db.session.commit()
 
-    return redirect("/login-page")
+    return redirect("/")
 
 
-@app.route("/login")  # This is a get request.
-def login_page():
-
-    return render_template("login.html")
-
-
-@app.route("/login", methods=["POST"])  # Post request; can have same route name.
-def login_process():
+@app.route("/login", methods=["POST"])  # Post request
+def login():
     """Takes information from register form and checks if a user with the
        email address/pwd matches, and if so, logs them in."""
 
     email = request.form.get("email")
     pwd = request.form.get("pwd")
 
+    pwd_hashed = db.session.query(Users).filter(Users.email \
+        == email).first().pwd_hashed
+
     # Checks if pwd matches the pwd_hashed in database.
     if pbkdf2_sha256.verify(pwd, pwd_hashed):
-        flash("Logged in! as %s" % User.first_name)
-        user_id = db.session.query(User.user_id).filter(User.email == email).one()
+        flash("Logged in! as %s" % Users.first_name)
+        user_id = db.session.query(Users.user_id).filter(Users.email \
+            == email).one()
 
         session['user_id'] = user_id[0]
-        return redirect("/users/%s" % (user_id[0]))
+        return redirect("/dashboard/%s" % (user_id[0]))
     else:
         flash("Email/password combination do not match.")
-        return redirect("/login-page")
+        return redirect("/login")
 
 
 @app.route("/logout")
-def logout_process():
+def logout():
     """Logs out current user."""
 
     del session['user_id']
@@ -89,33 +89,26 @@ def logout_process():
     return redirect("/")
 
 
-@app.route("/search_titles")
-def titles_query():
-    """Takes user search input, retrieves json string and matches job titles to
-       database, returns titles and salary information."""
+@app.route("/dashboard/<user_id>")
+def show_skills(user_id):
+    """Takes user search input and returns titles and related skills."""
 
-    search_input = request.args.get('search_input')
-    titles_list, uuid_list_ignore = skillsAPI.query_titles(search_input)
+    search_input = request.args.get("search_input")
+    titles_list, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    return render_template("/related_titles.html", titles=titles_list)
+    skills = get_skills("search_input")
 
-@app.route("/search_skills")
-def skills_query():
-    """Returns list of skills related to each job title."""
-
-    search_input = request.args.get('search_input')
-    skillsAPI.query_skills_from_title(search_input)
-
-    return render_template("/related_skills.html")
+    return render_template("/dashboard.html", titles=titles_list,
+                           skills=skills_list )
 
 
-# @app.route("/users/<user_id>")
-# def show_user_details(user_id):
-#     """Shows user details."""
+@app.route("/users/<user_id>")
+def show_user_details(user_id):
+    """Shows user details."""
 
-#     user = db.session.query(User).get(user_id)
+    user = db.session.query(User).get(user_id)
 
-#     return render_template("user_info.html", user=user)
+    return render_template("user_info.html", user=user)
 
 
 

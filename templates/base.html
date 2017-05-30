@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
 <head>
-    <title>Salaries</title>
+    <title>Career Discovery</title>
+    <link rel="stylesheet" href="/templates/stylesheet.css">
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul class=flashes>
@@ -13,15 +15,21 @@
 {% endwith %}
 </head>
 <body>
-    <a href="/login">Login</a>
+    <a href="/">Home</a>
     <a href="/reg_form">Register</a>
     <form action="/logout">
         <button type="submit">Logout</button>
     </form>
     <a href="/">Home</a><br>
-    Salaries
-    <hr>
+    <h1>Career Discovery</h1>
+    <hr> <!-- horizontal line -->
     {% block content %} put your content here {% endblock %}
 
+
+
+    <script src="javascipt.js"></script>
+
+    <footer>2017 Hackbright Student Project - Carrie Li
+    </footer>
 </body>
 </html>

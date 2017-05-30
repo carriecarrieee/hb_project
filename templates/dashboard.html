@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<h1>Career Discovery</h1>
+
+
+    <h2>Welcome, {{  }}!</h2>
+
+    <h2>Job Titles related</h2>
+  {% for title in titles %}
+      <li>
+          <a href="/related_skills/{{ title }}">
+             {{ title }}
+          </a>
+      </li>
+  {% endfor %}
+
+
+    <h2>Skills related to {{ title }}</h2>
+  {% for title in titles_list %}
+      <li>
+          <a href="/related_skills/{{ user.user_id }}">
+            User ID: {{ title }}
+          </a>
+      </li>
+  {% endfor %}
+
+
+<div id="map"></div>
+<script src="https://code.jquery.com/jquery.js"></script>
+
+
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8OUbV65M8fRk2cSa-qfCf8zdnSAjyUbg
+&callback=initMap">
+</script>
+
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+</script>
+
+
+{% endblock %}
