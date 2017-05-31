@@ -1,4 +1,4 @@
-"""Models and database functions for cars database."""
+"""Models and database functions for skills database."""
 
 from flask_sqlalchemy import SQLAlchemy
 

@@ -24,7 +24,7 @@ function initMap() {
       {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 }
 var locations = [
-  {lat: -31.563910, lng: 147.154312, name: title},
+  {lat: -31.563910, lng: 147.154312, name: company},
   {lat: -33.718234, lng: 150.363181},
   {lat: -33.727111, lng: 150.371124},
   {lat: -33.848588, lng: 151.209834},
