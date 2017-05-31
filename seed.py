@@ -11,13 +11,12 @@ def UnicodeDictReader(utf8_data, **kwargs):
     csv_reader = csv.DictReader(utf8_data, **kwargs)
     for row in csv_reader:
         row_obj = row.iteritems()
-        doc = {unicode(key, 'utf-8'):unicode(value, 'utf-8') \
+        doc = {unicode(key, 'utf-8'): unicode(value, 'utf-8') \
             for key, value in row_obj if key not in ["lon", "lat"]}
 
         # Create location dictionary that includes geopoint and coordinates.
         try:
-            doc["location"] = {"type": "point", "coordinates": \
-                [float(row["lon"]), float(row["lat"])]}
+            doc["location"] = {"lat": float(row["lat"]), "lon": float(row["lon"])}
 
             yield doc
         except:

@@ -5,12 +5,12 @@ from pprint import pprint
 def query_h1bdb(title):
     esclient = Elasticsearch(['localhost:9200'])
     
-    title = "CHIEF OPERATING OFFICER"
+    # title = "CHIEF OPERATING OFFICER"
 
     lon = 4.89994
     lat = 52.37815
-    response = esclient.search(
 
+    response = esclient.search(
 
     index='salaries',
     body={
@@ -19,18 +19,25 @@ def query_h1bdb(title):
                 "should": {
                     "match": {
                         "TITLE": title
-                        }},
-                "must": {    
-                    "geo_shape": {
-                        "location": { 
-                            "shape": { 
-                                "type": "circle", 
-                                "radius": "1km",
-                                "coordinates": [lon, lat]
-                                }
-                            }
-                        }
-                    }}
+                        }}
+                # "filter": {
+                #     "geo_distance": {
+                #         "distance": "10mi",
+                #             "location.coordinates": [lon, lat]
+                #     }
+                # }
+                # "must": {    
+                #     "geo_shape": {
+                #         "location": { 
+                #             "shape": { 
+                #                 "type": "circle", 
+                #                 "radius": "1km",
+                #                 "coordinates": [lon, lat]
+                #                 }
+                #             }
+                #         }
+                #     }
+                    }
                 }
             }
         )
@@ -52,4 +59,4 @@ def query_h1bdb(title):
     # print loc_list
 
 query_h1bdb("grape")
-
+# https://www.elastic.co/guide/en/elasticsearch/reference/5.4/query-dsl-geo-distance-query.html
