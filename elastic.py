@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 import json
 from pprint import pprint
 
-def query_h1bdb(title):
+def search_db(skill):
     esclient = Elasticsearch(['localhost:9200'])
     
     # title = "CHIEF OPERATING OFFICER"
@@ -17,27 +17,18 @@ def query_h1bdb(title):
         "query": {
             "bool": {
                 "should": {
-                    "match": {
-                        "TITLE": title
+                    "multi_match": {
+                        "query": skill,
+                        "type": "best_fields",
+                        "fields": ["TITLE", "SOC_NAME"]
                         }}
-                # "filter": {
-                #     "geo_distance": {
-                #         "distance": "10mi",
-                #             "location.coordinates": [lon, lat]
-                #     }
-                # }
-                # "must": {    
-                #     "geo_shape": {
-                #         "location": { 
-                #             "shape": { 
-                #                 "type": "circle", 
-                #                 "radius": "1km",
-                #                 "coordinates": [lon, lat]
-                #                 }
-                #             }
-                #         }
-                #     }
-                    }
+                "filter": {
+                    "geo_distance": {
+                        "distance": "10mi",
+                            "location": [lon, lat]
+                            }
+                        }      
+                    }   
                 }
             }
         )
@@ -47,16 +38,19 @@ def query_h1bdb(title):
     print json.dumps(response, indent=4)
     pprint(response)
 
-    # loc_list = []
-    # loc_dict = {}
+def get_locations():
 
-    # results = response["hits"]["hits"]
-    # for result in results:
-    #     loc_dict["lat"] = float(result["_source"]["lat"])
-    #     loc_dict["lng"] = float(result["_source"]["lon"])
-    #     loc_list.append(loc_dict)
+    loc_list = []
+    loc_dict = {}
 
-    # print loc_list
+    search_db(skill)
+    results = response["hits"]["hits"]
+    for result in results:
+        loc_dict["lat"] = float(result["_source"]["lat"])
+        loc_dict["lng"] = float(result["_source"]["lon"])
+        loc_list.append(loc_dict)
 
-query_h1bdb("grape")
+    print loc_list
+
+search_db("grape")
 # https://www.elastic.co/guide/en/elasticsearch/reference/5.4/query-dsl-geo-distance-query.html

@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Career Discovery</h1>
-
-
     <h2>Please Login</h2>
     <form action="/login" method="POST">
       Email: <input type="text" name="email"><br>
@@ -12,9 +9,6 @@
       <input type="submit", value="Submit">
     </form>
 
-    <form action="/search_titles">
-        Enter a skill or job title: <input type="text" name="search_input"><br>
-        <input type="submit", value="Submit">
-    </form>
+
 
 {% endblock %}

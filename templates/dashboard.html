@@ -2,12 +2,15 @@
 {% block content %}
 
 
-<h1>Career Discovery</h1>
+  <h2>Welcome, {{ user.first_name }}!</h2>
 
+  <h2>Job Titles related</h2>
 
-    <h2>Welcome, {{  }}!</h2>
+  <form action="/search_titles">
+      Enter a skill: <input type="text" name="search_input"><br>
+      <input type="submit", value="Submit">
+  </form>
 
-    <h2>Job Titles related</h2>
   {% for title in titles %}
       <li>
           <a href="/related_skills/{{ title }}">
@@ -15,6 +18,8 @@
           </a>
       </li>
   {% endfor %}
+
+
 
 
     <h2>Skills related to {{ title }}</h2>
