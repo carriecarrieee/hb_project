@@ -1,0 +1,115 @@
+(env) vagrant@vagrant:~/src/project$ curl -XGET localhost:9200/salaries/?pretty
+{
+  "salaries" : {
+    "aliases" : { },
+    "mappings" : {
+      "h1b_apps" : {
+        "properties" : {
+          "CASE_STATUS" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "EMPLOYER" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "FULL_TIME_POSITION" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "KEY" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "SALARY" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "SOC_NAME" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "TITLE" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "WORKSITE" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "YEAR" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "location" : {
+            "properties" : {
+              "lat" : {
+                "type" : "float"
+              },
+              "lon" : {
+                "type" : "float"
+              }
+            }
+          }
+        }
+      }
+    },
+    "settings" : {
+      "index" : {
+        "creation_date" : "1496286157626",
+        "number_of_shards" : "5",
+        "number_of_replicas" : "1",
+        "uuid" : "RQlCOKUOQFigvp2PZBodCQ",
+        "version" : {
+          "created" : "5040099"
+        },
+        "provided_name" : "salaries"
+      }
+    }
+  }
+}
