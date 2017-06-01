@@ -21,7 +21,7 @@ def search_db(skill):
                         "query": skill,
                         "type": "best_fields",
                         "fields": ["TITLE", "SOC_NAME"]
-                        }}
+                        }},
                 "filter": {
                     "geo_distance": {
                         "distance": "10mi",
@@ -51,6 +51,7 @@ def get_locations():
         loc_list.append(loc_dict)
 
     print loc_list
+    return loc_list
 
 search_db("grape")
 # https://www.elastic.co/guide/en/elasticsearch/reference/5.4/query-dsl-geo-distance-query.html

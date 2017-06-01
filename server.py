@@ -76,7 +76,7 @@ def login():
         return redirect("/dashboard/%s" % (user_id[0]))
     else:
         flash("Email/password combination do not match.")
-        return redirect("/login")
+        return redirect("/")
 
 
 @app.route("/logout")
@@ -93,14 +93,13 @@ def logout():
 def show_skills(user_id):
     """Takes user search input and returns titles and related skills."""
 
-    user = Users.query.get(session['user_id'])
-    search_input = request.args.get("search_input")
-    titles_list, uuid_list_ignore = skillsAPI.get_titles(search_input)
+    user = db.session.query(Users).get(user_id)
+    # search_input = request.args.get("search_input")
+    # titles_list, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    skills = get_skills("search_input")
+    # skills = get_skills("search_input")
 
-    return render_template("/dashboard.html", user=user, titles=titles_list,
-                           skills=skills_list)
+    return render_template("/dashboard/%s.html" % (user_id[0]))
 
 
 @app.route("/users/<user_id>")
