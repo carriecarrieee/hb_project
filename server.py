@@ -93,13 +93,16 @@ def logout():
 def show_skills(user_id):
     """Takes user search input and returns titles and related skills."""
 
-    user = db.session.query(Users).get(user_id)
-    # search_input = request.args.get("search_input")
-    # titles_list, uuid_list_ignore = skillsAPI.get_titles(search_input)
+    user = db.session.query(User).get(user_id)
+    search_input = request.args.get("search_input")
+    titles_list, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    # skills = get_skills("search_input")
+    skills = get_skills("search_input")
 
-    return render_template("/dashboard/%s.html" % (user_id[0]))
+    return render_template("/dashboard/%s.html" % (user_id[0]),
+                            user=user,
+                            titles=titles_list,
+                            skills=skills_list)
 
 
 @app.route("/users/<user_id>")

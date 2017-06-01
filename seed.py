@@ -2,10 +2,12 @@
 
 
 from elasticsearch import helpers, Elasticsearch
+from elasticsearch_dsl import Search
 import csv
 
 
 esclient = Elasticsearch(['localhost:9200'])
+
 
 def UnicodeDictReader(utf8_data, **kwargs):
     csv_reader = csv.DictReader(utf8_data, **kwargs)
@@ -23,7 +25,7 @@ def UnicodeDictReader(utf8_data, **kwargs):
             pass
 
 
-with open('data/h1b_salaries.csv') as file:
+with open('data/h1b_salaries.csv.head') as file:
     reader = UnicodeDictReader(file)
     helpers.bulk(esclient, reader, index='salaries', doc_type='h1b_apps')
 
