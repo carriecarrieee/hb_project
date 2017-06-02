@@ -10,7 +10,13 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import Users, Skills, Titles, UserSkills, UserTitles, connect_to_db, db
 
-import skillsAPI
+from elasticsearch import Elasticsearch
+
+from pprint import pprint
+
+import requests, json
+
+import skillsAPI, elastic
 
 app = Flask(__name__)
 
@@ -93,23 +99,39 @@ def logout():
 def show_skills(user_id):
     """Takes user search input and returns titles and related skills."""
 
-    user = db.session.query(User).get(user_id)
+    user = db.session.query(Users).get(user_id)
     search_input = request.args.get("search_input")
-    titles_list, uuid_list_ignore = skillsAPI.get_titles(search_input)
+    titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    skills = get_skills("search_input")
+    skills = skillsAPI.get_skills(search_input)
 
-    return render_template("/dashboard/%s.html" % (user_id[0]),
+    return render_template("/dashboard.html",
                             user=user,
-                            titles=titles_list,
-                            skills=skills_list)
+                            titles=titles,
+                            skills=skills)
 
+@app.route("/gmaps_data/<skill>")
+def get_gmaps_data(skill):
+
+    loc_list = []
+    loc_dict = {}
+
+    response = elastic.search_db(skill)
+    results = response["hits"]["hits"]
+    for result in results:
+        loc_dict["lat"] = result["_source"]["location"]["lat"]
+        loc_dict["lng"] = result["_source"]["location"]["lon"]
+        loc_dict["title"] = str(result["_source"]["TITLE"])
+        loc_list.append(loc_dict)
+
+    pprint(loc_list)
+    return jsonify(loc_list)
 
 @app.route("/users/<user_id>")
 def show_user_details(user_id):
     """Shows user details."""
 
-    user = db.session.query(User).get(user_id)
+    user = db.session.query(Users).get(user_id)
 
     return render_template("user_info.html", user=user)
 

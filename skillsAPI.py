@@ -43,10 +43,12 @@ def get_skills(search_input):
         response = r.json() # Convert json to dict
         counter += 1
 
-        id_to_skills[uuid] = [str(skill["skill_name"]) \
-            for skill in response.get("skills", []) \
-            if skill.get.sort("importance", 0) > 3.3]
+        # id_to_skills[uuid] = [str(skill["skill_name"])
+        id_to_skills[uuid] = [skill for skill in response.get("skills", []) \
+            if skill.get("importance", 0) > 3.3]
 
+        id_to_skills[uuid].sort(key=lambda skill: skill.get("importance", 0))
+        id_to_skills[uuid] = [str(skill["skill_name"]) for skill in id_to_skills[uuid]]
 
     pprint(id_to_skills)
     return id_to_skills
