@@ -17,17 +17,20 @@
 <body>
 
     <script src="https://code.jquery.com/jquery.js"></script>
+
+    <!--The links below go to app routes in server.py, not html pages.-->
     <a href="/">Home</a>
     <a href="/reg_form">Register</a>
 
     {% if "user_id" in session %}
+        <a href="/welcome">Search</a>
+
         <form action="/logout">
             <button type="submit">Logout</button>
         </form>
     {% endif %}
 
 
-    <a href="/">Home</a><br>
     <h1>Career Discovery</h1>
     <hr> <!-- horizontal line -->
     {% block content %} put your content here {% endblock %}

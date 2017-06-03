@@ -1,10 +1,10 @@
 // Google Maps: Blank U.S. Map
 
-function initMap() {
+function initMapBlank() {
 
     var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 3,
-        center: {lat: 39.8282, lng: -98.5795} // Center geopoint of U.S.
+        zoom: 4,
+        center: {lat: 37.0902, lng: -95.7129} // Center geopoint of U.S.
     });
 
  }

@@ -54,8 +54,8 @@ def reg_process():
     pwd_hashed = pbkdf2_sha256.hash(pwd)
 
     if db.session.query(Users).filter(Users.email == email).first() is None:
-        new_user = Users(fname=fname,
-                         lname=lname,
+        new_user = Users(fname=first_name,
+                         lname=last_name,
                          email=email,
                          pwd_hashed=pwd_hashed)
         db.session.add(new_user)
@@ -77,12 +77,20 @@ def login():
 
     # Checks if pwd matches the pwd_hashed in database.
     if pbkdf2_sha256.verify(pwd, pwd_hashed):
-        flash("Logged in! as %s" % Users.first_name)
+        
         user_id = db.session.query(Users.user_id).filter(Users.email \
             == email).one()
 
         session['user_id'] = user_id[0]
-        return redirect("/welcome/%s" % session['user_id'])
+
+        user = db.session.query(Users).get(session['user_id'])
+        flash("Logged in! Hello, %s!" % user.first_name)
+
+        return redirect("/welcome/%s" % (session['user_id']))
+
+    elif not user_id:
+        flash("User not found. Please register!")
+        return redirect("/reg_form")
     else:
         flash("Email/password combination do not match.")
         return redirect("/")
@@ -102,16 +110,20 @@ def logout():
 def show_welcome_page(user_id):
     """Displays welcome page with search bar and blank U.S. map."""
     
-    user = db.session.query(Users).get(user_id)
+    if session.get('user_id') is None:
+        flash("Please login!")
+        return redirect("/")
+    else:
+        user = db.session.query(Users).get(user_id)
+        return render_template("/welcome.html", user=user)
 
-    return render_template("/welcome.html", user=user)
 
 
 @app.route("/dashboard")
 def show_skills():
     """Takes user search input and returns titles and related skills."""
 
-    user = db.session.query(Users).get(session["user_id"])
+    user = db.session.query(Users).get(user_id)
     search_input = request.args.get("search_input")
     # titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
