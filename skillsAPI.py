@@ -18,7 +18,6 @@ def get_titles(search_input):
 
     for result in results:
         uuid_list.append(str(result.get('uuid', '')))
-        # titles_list.append(str(result.get('suggestion'.decode('unicode-escape'), None).encode('utf-8')))
         titles_list.append(str(result.get('suggestion', '')))
  
     return titles_list, uuid_list
@@ -36,6 +35,7 @@ def get_skills(search_input):
     for uuid in uuid_list:
         if counter >= 20:
             break
+
         r = requests.get('http://api.dataatwork.org/v1/jobs/'
             + uuid
             + '/related_skills')
@@ -43,12 +43,15 @@ def get_skills(search_input):
         response = r.json() # Convert json to dict
         counter += 1
 
-        # id_to_skills[uuid] = [str(skill["skill_name"])
-        id_to_skills[uuid] = [skill for skill in response.get("skills", []) \
-            if skill.get("importance", 0) > 3.3]
+        id_to_skills[uuid] = [str(skill["skill_name"]) \
+            for skill in response.get("skills", []) \
+            if skill.get.sort("importance", 0) > 3.3]
 
-        id_to_skills[uuid].sort(key=lambda skill: skill.get("importance", 0))
-        id_to_skills[uuid] = [str(skill["skill_name"]) for skill in id_to_skills[uuid]]
+        # id_to_skills[uuid] = [skill for skill in response.get("skills", []) \
+        #     if skill.get("importance", 0) > 3.3]
+
+        # id_to_skills[uuid].sort(key=lambda skill: skill.get("importance", 0))
+        # id_to_skills[uuid] = [str(skill["skill_name"]) for skill in id_to_skills[uuid]]
 
     pprint(id_to_skills)
     return id_to_skills

@@ -31,8 +31,8 @@ class Users(db.Model):
         """Provide helpful representation when printed."""
 
         user_obj = ("<User ID={user_id} "
-                "name={first} {last} "
-                "email={email}")
+                    "name={first} {last} "
+                    "email={email}")
 
         return user_obj.format(user_id=self.user_id,
                                first=self.first_name,

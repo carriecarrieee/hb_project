@@ -54,7 +54,10 @@ def reg_process():
     pwd_hashed = pbkdf2_sha256.hash(pwd)
 
     if db.session.query(Users).filter(Users.email == email).first() is None:
-        new_user = Users(email=email, pwd_hashed=pwd_hashed)
+        new_user = Users(fname=fname,
+                         lname=lname,
+                         email=email,
+                         pwd_hashed=pwd_hashed)
         db.session.add(new_user)
         db.session.commit()
 
@@ -79,7 +82,7 @@ def login():
             == email).one()
 
         session['user_id'] = user_id[0]
-        return redirect("/dashboard/%s" % (user_id[0]))
+        return redirect("/welcome/%s" % session['user_id'])
     else:
         flash("Email/password combination do not match.")
         return redirect("/")
@@ -95,45 +98,80 @@ def logout():
     return redirect("/")
 
 
-@app.route("/dashboard/<user_id>")
-def show_skills(user_id):
+@app.route("/welcome/<user_id>")
+def show_welcome_page(user_id):
+    """Displays welcome page with search bar and blank U.S. map."""
+    
+    user = db.session.query(Users).get(user_id)
+
+    return render_template("/welcome.html", user=user)
+
+
+@app.route("/dashboard")
+def show_skills():
     """Takes user search input and returns titles and related skills."""
 
-    user = db.session.query(Users).get(user_id)
+    user = db.session.query(Users).get(session["user_id"])
     search_input = request.args.get("search_input")
-    titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
+    # titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    skills = skillsAPI.get_skills(search_input)
+    # skills = skillsAPI.get_skills(search_input)
+
+    titles = ["testing titles"]
+    skills = ["testing skills"]
 
     return render_template("/dashboard.html",
                             user=user,
                             titles=titles,
                             skills=skills)
 
-@app.route("/gmaps_data/<skill>")
-def get_gmaps_data(skill):
+@app.route("/gmaps_data")
+def get_gmaps_data():
 
-    loc_list = []
-    loc_dict = {}
+    skill = request.args.get("skill")
+    print skill
+    # loc_list = []
+    # loc_dict = {}
+    # # lat_lon_set = 
 
-    response = elastic.search_db(skill)
-    results = response["hits"]["hits"]
-    for result in results:
-        loc_dict["lat"] = result["_source"]["location"]["lat"]
-        loc_dict["lng"] = result["_source"]["location"]["lon"]
-        loc_dict["title"] = str(result["_source"]["TITLE"])
-        loc_list.append(loc_dict)
+    # response = elastic.search_db(skill)
+    # results = response["hits"]["hits"]
+    # for result in results:
+    #     # if 
+    #     loc_dict["lat"] = result["_source"]["location"]["lat"]
+    #     loc_dict["lng"] = result["_source"]["location"]["lon"]
+    #     loc_dict["title"] = str(result["_source"]["TITLE"])
+    #     loc_list.append(loc_dict)
 
-    pprint(loc_list)
-    return jsonify(loc_list)
+    mock_data = [
+        {"lat": -31.563910, "lng": 147.154312},
+        {"lat": -33.718234, "lng": 150.363181},
+        {"lat": -33.727111, "lng": 150.371124},
+        {"lat": -33.848588, "lng": 151.209834},
+        {"lat": -33.851702, "lng": 151.216968},
+        {"lat": -34.671264, "lng": 150.863657},
+        {"lat": -35.304724, "lng": 148.662905},
+        {"lat": -36.817685, "lng": 175.699196},
+        {"lat": -36.828611, "lng": 175.790222},
+        {"lat": -37.750000, "lng": 145.116667},
+        {"lat": -37.759859, "lng": 145.128708},
+        {"lat": -37.765015, "lng": 145.133858},
+        {"lat": -37.770104, "lng": 145.143299},
+        {"lat": -37.773700, "lng": 145.145187},
+        {"lat": -37.774785, "lng": 145.137978},
+        {"lat": -37.819616, "lng": 144.968119},
+        {"lat": -38.330766, "lng": 144.695692},
+        {"lat": -39.927193, "lng": 175.053218},
+        {"lat": -41.330162, "lng": 174.865694},
+        {"lat": -42.734358, "lng": 147.439506},
+        {"lat": -42.734358, "lng": 147.501315},
+        {"lat": -42.735258, "lng": 147.438000},
+        {"lat": -43.999792, "lng": 170.463352}
+    ]
 
-@app.route("/users/<user_id>")
-def show_user_details(user_id):
-    """Shows user details."""
+    # pprint(loc_list)
+    return jsonify(mock_data)
 
-    user = db.session.query(Users).get(user_id)
-
-    return render_template("user_info.html", user=user)
 
 
 

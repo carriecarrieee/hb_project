@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+  <h2>Welcome, {{ user.first_name }}!</h2>
+
+  <h2>Search a skill</h2>
+
+<!-- action goes to only one route -->
+  <form action="/dashboard" id="search">
+      Enter a skill: <input id="search_term" type="text" name="search_input"><br>
+      <input id="gmap" type="submit" value="Submit">
+  </form>
+
+
+
+<div id="map"></div>
+
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8OUbV65M8fRk2cSa-qfCf8zdnSAjyUbg
+&callback=initMap">
+</script>
+
+
+<script src="/static/js/US_map.js"></script>
+
+{% endblock %}
