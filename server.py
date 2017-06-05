@@ -16,7 +16,7 @@ from pprint import pprint
 
 import requests, json
 
-import skillsAPI, elastic
+import skills_api, elastic
 
 app = Flask(__name__)
 
@@ -75,7 +75,7 @@ def login():
     pwd_hashed = db.session.query(Users).filter(Users.email \
         == email).first().pwd_hashed
 
-    # Checks if pwd matches the pwd_hashed in database.
+    # Check if pwd matches the pwd_hashed in database.
     if pbkdf2_sha256.verify(pwd, pwd_hashed):
         
         user_id = db.session.query(Users.user_id).filter(Users.email \
@@ -83,6 +83,7 @@ def login():
 
         session['user_id'] = user_id[0]
 
+        # Grab name from User object.
         user = db.session.query(Users).get(session['user_id'])
         flash("Logged in! Hello, %s!" % user.first_name)
 
@@ -123,37 +124,40 @@ def show_welcome_page(user_id):
 def show_skills():
     """Takes user search input and returns titles and related skills."""
 
-    user = db.session.query(Users).get(user_id)
-    search_input = request.args.get("search_input")
-    # titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
+    user = db.session.query(Users).get(session['user_id'])
+    # search_input = request.args.get("search_input")
+    # # titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    # skills = skillsAPI.get_skills(search_input)
+    # # skills = skillsAPI.get_skills(search_input)
 
-    titles = ["testing titles"]
-    skills = ["testing skills"]
+    # titles = ["testing titles"]
+    # skills = ["testing skills"]
 
     return render_template("/dashboard.html",
-                            user=user,
-                            titles=titles,
-                            skills=skills)
+                            user=user)
 
 @app.route("/gmaps_data")
 def get_gmaps_data():
 
-    skill = request.args.get("skill")
-    print skill
+    search_term = request.args.get("search_input")
+    print search_term
+    print type(search_term)
+
+    # response = elastic.search_db(search_term)
+    # pprint(response)
+
+    # results = response["hits"]["hits"]
+
     # loc_list = []
     # loc_dict = {}
-    # # lat_lon_set = 
 
-    # response = elastic.search_db(skill)
-    # results = response["hits"]["hits"]
     # for result in results:
-    #     # if 
     #     loc_dict["lat"] = result["_source"]["location"]["lat"]
     #     loc_dict["lng"] = result["_source"]["location"]["lon"]
     #     loc_dict["title"] = str(result["_source"]["TITLE"])
     #     loc_list.append(loc_dict)
+
+
 
     mock_data = [
         {"lat": -31.563910, "lng": 147.154312},
@@ -182,8 +186,11 @@ def get_gmaps_data():
     ]
 
     # pprint(loc_list)
-    return jsonify(mock_data)
+    
 
+    
+    # return jsonify(loc_list)
+    return jsonify(mock_data)
 
 
 

@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 import json
 from pprint import pprint
 
-def search_db(skill):
+def search_db(search_term):
     esclient = Elasticsearch(['localhost:9200'])
  
     response = esclient.search(
@@ -10,9 +10,12 @@ def search_db(skill):
         index='salaries',
         body={
             "query": {
-                "multi_match": {
-                    "query": skill,
-                    "fields": ["SOC_NAME", "TITLE"]
+                "bool": {
+                    "should": {
+                        "match": {
+                            "TITLE": search_term,
+                            }
+                        }
                     }
                 }
             }

@@ -1,7 +1,11 @@
-"""Get skills/job titles from Skills API."""
+""" Get skills/job titles from Skills API.
+    https://github.com/workforce-data-initiative/skills-api/wiki/API-Overview
+    http://api.dataatwork.org/v1/spec/
+    """
 
 import requests, json
 from pprint import pprint
+
 
 def get_titles(search_input):
     """Queries API to return related job titles."""
@@ -24,8 +28,9 @@ def get_titles(search_input):
 
 
 def get_skills(search_input):
-    """Based on titles list from skills_api(), returns list of skills related
-       to each job title."""
+    """ Based on titles list from get_titles() function, returns list of 
+        skills related to each job title.
+        """
 
     titles_list_ignore, uuid_list = get_titles(search_input)
 
@@ -43,15 +48,15 @@ def get_skills(search_input):
         response = r.json() # Convert json to dict
         counter += 1
 
+
+        # Returns dictionary of uuid to skills with an importance level above
+        # 3.3 and sorted in descending order.
+        id_to_skills[uuid] = [skill for skill in response.get("skills", []) \
+            if skill.get("importance", 0) > 3.3]
+
+        id_to_skills[uuid].sort(key=lambda skill: skill.get("importance", 0))
         id_to_skills[uuid] = [str(skill["skill_name"]) \
-            for skill in response.get("skills", []) \
-            if skill.get.sort("importance", 0) > 3.3]
-
-        # id_to_skills[uuid] = [skill for skill in response.get("skills", []) \
-        #     if skill.get("importance", 0) > 3.3]
-
-        # id_to_skills[uuid].sort(key=lambda skill: skill.get("importance", 0))
-        # id_to_skills[uuid] = [str(skill["skill_name"]) for skill in id_to_skills[uuid]]
+            for skill in id_to_skills[uuid]]
 
     pprint(id_to_skills)
     return id_to_skills
