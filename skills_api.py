@@ -60,4 +60,3 @@ def get_skills(search_input):
 
     pprint(id_to_skills)
     return id_to_skills
-

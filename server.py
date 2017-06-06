@@ -54,10 +54,10 @@ def reg_process():
     pwd_hashed = pbkdf2_sha256.hash(pwd)
 
     if db.session.query(Users).filter(Users.email == email).first() is None:
-        new_user = Users(fname=first_name,
-                         lname=last_name,
+        new_user = Users(first_name=fname,
+                         last_name=lname,
                          email=email,
-                         pwd_hashed=pwd_hashed)
+                         pwd_hashed=pwd)
         db.session.add(new_user)
         db.session.commit()
 
@@ -78,18 +78,18 @@ def login():
     # Check if pwd matches the pwd_hashed in database.
     if pbkdf2_sha256.verify(pwd, pwd_hashed):
         
-        user_id = db.session.query(Users.user_id).filter(Users.email \
+        user = db.session.query(Users).filter(Users.email \
             == email).one()
 
-        session['user_id'] = user_id[0]
+        session['user_id'] = user.user_id
 
         # Grab name from User object.
-        user = db.session.query(Users).get(session['user_id'])
+
         flash("Logged in! Hello, %s!" % user.first_name)
 
-        return redirect("/welcome/%s" % (session['user_id']))
+        return redirect("/welcome")
 
-    elif not user_id:
+    elif not user:
         flash("User not found. Please register!")
         return redirect("/reg_form")
     else:
@@ -107,15 +107,15 @@ def logout():
     return redirect("/")
 
 
-@app.route("/welcome/<user_id>")
-def show_welcome_page(user_id):
+@app.route("/welcome")
+def show_welcome_page():
     """Displays welcome page with search bar and blank U.S. map."""
     
     if session.get('user_id') is None:
         flash("Please login!")
         return redirect("/")
     else:
-        user = db.session.query(Users).get(user_id)
+        user = db.session.query(Users).get(session['user_id'])
         return render_template("/welcome.html", user=user)
 
 
@@ -125,73 +125,70 @@ def show_skills():
     """Takes user search input and returns titles and related skills."""
 
     user = db.session.query(Users).get(session['user_id'])
-    # search_input = request.args.get("search_input")
-    # # titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
+    search_input = request.args.get("search_input")
+    # titles, uuid_list_ignore = skillsAPI.get_titles(search_input)
 
-    # # skills = skillsAPI.get_skills(search_input)
-
-    # titles = ["testing titles"]
-    # skills = ["testing skills"]
+    # skills = skillsAPI.get_skills(search_input)
 
     return render_template("/dashboard.html",
-                            user=user)
+                            user=user,
+                            search_input=search_input)
+
 
 @app.route("/gmaps_data")
 def get_gmaps_data():
 
-    search_term = request.args.get("search_input")
-    print search_term
-    print type(search_term)
+    term = request.args.get("search_input")
+    print term
+    print type(term)
 
-    # response = elastic.search_db(search_term)
+    response = elastic.search_db(term)
     # pprint(response)
+    
 
-    # results = response["hits"]["hits"]
-
-    # loc_list = []
-    # loc_dict = {}
-
+    results = response["hits"]["hits"]
+    # print results
     # for result in results:
-    #     loc_dict["lat"] = result["_source"]["location"]["lat"]
-    #     loc_dict["lng"] = result["_source"]["location"]["lon"]
-    #     loc_dict["title"] = str(result["_source"]["TITLE"])
+    #     latitude = result["_source"]["location"]["lat"]
+    #     longitude = result["_source"]["location"]["lon"]
+    #     company = str(result["_source"]["TITLE"])
+
+    # print results
+    loc_list = []
+
+
+    # for key, value in results.items():
+    #     if latitude not in loc_dict.values():
+    #         loc_dict["lat"] = latitude
+    #     if longitude not in loc_dict.values():
+    #         loc_dict["lng"] = longitude
+    #     if company not in loc_dict.values():
+    #         loc_dict["emp"] = company
     #     loc_list.append(loc_dict)
 
 
+    for result in results:
+        pprint(result)
 
-    mock_data = [
-        {"lat": -31.563910, "lng": 147.154312},
-        {"lat": -33.718234, "lng": 150.363181},
-        {"lat": -33.727111, "lng": 150.371124},
-        {"lat": -33.848588, "lng": 151.209834},
-        {"lat": -33.851702, "lng": 151.216968},
-        {"lat": -34.671264, "lng": 150.863657},
-        {"lat": -35.304724, "lng": 148.662905},
-        {"lat": -36.817685, "lng": 175.699196},
-        {"lat": -36.828611, "lng": 175.790222},
-        {"lat": -37.750000, "lng": 145.116667},
-        {"lat": -37.759859, "lng": 145.128708},
-        {"lat": -37.765015, "lng": 145.133858},
-        {"lat": -37.770104, "lng": 145.143299},
-        {"lat": -37.773700, "lng": 145.145187},
-        {"lat": -37.774785, "lng": 145.137978},
-        {"lat": -37.819616, "lng": 144.968119},
-        {"lat": -38.330766, "lng": 144.695692},
-        {"lat": -39.927193, "lng": 175.053218},
-        {"lat": -41.330162, "lng": 174.865694},
-        {"lat": -42.734358, "lng": 147.439506},
-        {"lat": -42.734358, "lng": 147.501315},
-        {"lat": -42.735258, "lng": 147.438000},
-        {"lat": -43.999792, "lng": 170.463352}
-    ]
+        loc_dict = {}
+        loc_dict["lat"] = result["_source"]["location"]["lat"]
+        loc_dict["lng"] = result["_source"]["location"]["lon"]
+        loc_dict["emp"] = str(result["_source"]["EMPLOYER"])
 
-    # pprint(loc_list)
+        loc_list.append(loc_dict)
     
+    pprint(loc_list)
 
-    
-    # return jsonify(loc_list)
-    return jsonify(mock_data)
+    # convert_to_set = set()
+    # locations = []
 
+    # for item in loc_list:
+    #     if tuple([item["lat"], item["lng"], item["emp"]]) not in convert_to_set:
+    #         locations.append(item)
+    #         convert_to_set.add(tuple([item["lat"], item["lng"], item["emp"]]))
+
+    # pprint(locations)
+    return jsonify(loc_list)
 
 
 if __name__ == "__main__":
